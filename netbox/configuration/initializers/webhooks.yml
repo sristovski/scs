@@ -1,0 +1,8 @@
+- name: osism_api_webhook
+  payload_url: 'http://netbox.services.in-a-box.cloud:8000/webhook/netbox'
+  object_types:
+    - device
+    - interface
+  type_create: True
+  type_delete: True
+  type_update: True

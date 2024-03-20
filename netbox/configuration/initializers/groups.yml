@@ -1,0 +1,6 @@
+---
+netbox-readers:
+  users: []
+netbox-writers:
+  users:
+  - dragon

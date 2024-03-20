@@ -1,0 +1,55 @@
+---
+- name: ceph-control
+  slug: ceph-control
+  color: Orange
+- name: ceph-resource
+  slug: ceph-resource
+  color: Orange
+- name: ceph-storage
+  slug: ceph-storage
+  color: Orange
+- name: control
+  slug: control
+  color: Blue
+- name: compute
+  slug: compute
+  color: Blue
+- name: openstack-compute
+  slug: openstack-compute
+  color: Blue
+- name: openstack-control
+  slug: openstack-control
+  color: Blue
+- name: generic
+  slug: generic
+  color: Lime
+- name: manager
+  slug: manager
+  color: Green
+- name: monitoring
+  slug: monitoring
+  color: Green
+- name: network
+  slug: network
+  color: Blue
+- name: openstack-network
+  slug: openstack-network
+  color: Blue
+- name: resource
+  slug: resource
+  color: Yellow
+- name: reserved
+  slug: reserved
+  color: Black
+- name: unusable
+  slug: unusable
+  color: Red
+- name: Managed by Ironic
+  slug: managed-by-ironic
+  color: Yellow
+- name: Managed by Bifrost
+  slug: managed-by-bifrost
+  color: Yellow
+- name: Managed by OSISM
+  slug: managed-by-osism
+  color: Yellow

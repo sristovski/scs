@@ -1,0 +1,20 @@
+---
+read_all:
+  actions:
+  - view
+  description: Read all objects
+  enabled: true
+  groups:
+  - netbox-readers
+  object_types: all
+read_write_all:
+  actions:
+  - add
+  - change
+  - delete
+  - view
+  description: Read/Write all objects
+  enabled: true
+  groups:
+  - netbox-writers
+  object_types: all

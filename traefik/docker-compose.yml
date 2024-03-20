@@ -1,0 +1,27 @@
+---
+services:
+  traefik:
+    container_name: "traefik"
+    restart: unless-stopped
+    image: "index.docker.io/library/traefik:2.11.0"
+    ports:
+      - "192.168.16.10:8122:8080"
+      - "192.168.16.10:443:443"
+      - "192.168.16.10:80:80"
+    env_file:
+      - "/opt/traefik/configuration/traefik.env"
+    volumes:
+      - "/etc/hosts:/etc/hosts:ro"
+      - "/opt/traefik/configuration/osism.yml:/etc/traefik/osism.yml:ro"
+      - "/opt/traefik/configuration/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "/opt/traefik/configuration/certificates.yml:/etc/traefik/dynamic/certificates.yml:ro"
+      - "/opt/traefik/certificates:/etc/traefik/certificates:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: traefik healthcheck
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

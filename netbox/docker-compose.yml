@@ -1,0 +1,107 @@
+---
+services:
+  postgres:
+    image: "index.docker.io/library/postgres:15.5-alpine"
+    restart: unless-stopped
+    env_file:
+      - "/opt/netbox/configuration/postgres.env"
+    volumes:
+      - "/opt/netbox/configuration/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro"
+      - postgres:/var/lib/postgresql/data
+    secrets:
+      - POSTGRES_PASSWORD
+    healthcheck:
+      test: pg_isready -U netbox
+      start_period: 30s
+    networks:
+      - default
+
+  redis:
+    restart: unless-stopped
+    image: "index.docker.io/library/redis:7.2.4-alpine"
+    command: redis-server --appendonly yes
+    volumes:
+      - "redis:/data"
+    healthcheck:
+      test: redis-cli ping
+    networks:
+      - default
+
+  netbox: &netbox
+    image: "quay.io/osism/netbox:v3.4.8"
+    restart: unless-stopped
+    user: "101"
+    env_file:
+      - "/opt/netbox/configuration/netbox.env"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - "/opt/netbox/configuration/configuration.py:/etc/netbox/config/configuration.py:ro"
+      - "/opt/netbox/configuration/nginx-unit.json:/etc/unit/nginx-unit.json:ro"
+      - "/opt/netbox/configuration/initializers:/opt/netbox/initializers:ro"
+      # NOTE: Workaround until script is available upstream
+      - "/opt/netbox/configuration/startup-scripts/270_tags.py:/opt/netbox/startup_scripts/270_tags.py:ro"
+    secrets:
+      - NETBOX_POSTGRES_PASSWORD
+      - NETBOX_SECRET_KEY
+    healthcheck:
+      test: curl -s -k http://127.0.0.1:8080/metrics
+      start_period: 120s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.middlewares.netbox-redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.netbox-redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.netbox.entrypoints=http"
+      - "traefik.http.routers.netbox.rule=Host(`netbox.services.in-a-box.cloud`)"
+      - "traefik.http.routers.netbox.middlewares=netbox-redirect-to-https@docker"
+      - "traefik.http.services.netbox-secure.loadbalancer.server.port=8080"
+      - "traefik.http.routers.netbox-secure.entrypoints=https"
+      - "traefik.http.routers.netbox-secure.tls=true"
+      - "traefik.http.routers.netbox-secure.rule=Host(`netbox.services.in-a-box.cloud`)"
+    networks:
+      - default
+      - traefik
+
+  netbox-worker:
+    <<: *netbox
+    depends_on:
+      netbox:
+        condition: service_healthy
+    entrypoint: /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py
+    command: rqworker
+    ports: []
+    healthcheck:
+      test: pgrep -f '/opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker'
+    networks:
+      - default
+    labels: []
+
+volumes:
+  postgres:
+  redis:
+
+secrets:
+  NETBOX_POSTGRES_PASSWORD:
+    file: /opt/netbox/secrets/NETBOX_POSTGRES_PASSWORD
+  NETBOX_SECRET_KEY:
+    file: /opt/netbox/secrets/NETBOX_SECRET_KEY
+  NETBOX_TOKEN:
+    file: /opt/netbox/secrets/NETBOX_TOKEN
+  POSTGRES_PASSWORD:
+    file: /opt/netbox/secrets/POSTGRES_PASSWORD
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+    ipam:
+      driver: default
+      config:
+        - subnet:  172.31.100.176/28
+  traefik:
+    external: true

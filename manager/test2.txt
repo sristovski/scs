@@ -1,0 +1,306 @@
+[
+    {
+        "Id": "b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed",
+        "Created": "2024-03-18T13:28:22.028169679Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "mariadbd"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2836,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2024-03-20T08:42:56.224963755Z",
+            "FinishedAt": "2024-03-20T08:41:59.953354831Z",
+            "Health": {
+                "Status": "unhealthy",
+                "FailingStreak": 7,
+                "Log": [
+                    {
+                        "Start": "2024-03-20T08:44:27.382234411Z",
+                        "End": "2024-03-20T08:44:27.496288983Z",
+                        "ExitCode": 1,
+                        "Output": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nhealthcheck innodb_initialized failed\n"
+                    },
+                    {
+                        "Start": "2024-03-20T08:44:58.00128542Z",
+                        "End": "2024-03-20T08:44:58.078572261Z",
+                        "ExitCode": 1,
+                        "Output": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nhealthcheck innodb_initialized failed\n"
+                    },
+                    {
+                        "Start": "2024-03-20T08:45:28.310975168Z",
+                        "End": "2024-03-20T08:45:28.398521207Z",
+                        "ExitCode": 1,
+                        "Output": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nhealthcheck innodb_initialized failed\n"
+                    },
+                    {
+                        "Start": "2024-03-20T08:45:58.457621513Z",
+                        "End": "2024-03-20T08:45:58.532793408Z",
+                        "ExitCode": 1,
+                        "Output": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nhealthcheck innodb_initialized failed\n"
+                    },
+                    {
+                        "Start": "2024-03-20T08:46:28.600983196Z",
+                        "End": "2024-03-20T08:46:28.666854573Z",
+                        "ExitCode": 1,
+                        "Output": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nhealthcheck innodb_initialized failed\n"
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:5bf2b86cbac506ee1dca87b9bc6bddd0afb59d14e97e111ff6579887121fedae",
+        "ResolvConfPath": "/var/lib/docker/containers/b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed/hostname",
+        "HostsPath": "/var/lib/docker/containers/b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed/hosts",
+        "LogPath": "/var/lib/docker/containers/b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed/b54a4c94a2bc8425f973e3579ebf7631d5947963ebb3c576c6d3316e52a26eed-json.log",
+        "Name": "/manager-mariadb-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {
+                    "max-file": "3",
+                    "max-size": "10m"
+                }
+            },
+            "NetworkMode": "manager_default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "Mounts": [
+                {
+                    "Type": "volume",
+                    "Source": "manager_mariadb",
+                    "Target": "/var/lib/mysql",
+                    "VolumeOptions": {}
+                }
+            ],
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/cef8af29b0cd2d0fd726a60973b56afcad49bbce6a80e45dd399121dffe267e7-init/diff:/var/lib/docker/overlay2/ae7f0606b90c083d31a1b69317f42ba3a4e5eff53bf731a46f2cbbb2e140007f/diff:/var/lib/docker/overlay2/23481c92448e7bfb96c2f6c31ad0ffc64c0b0f53afeddbaccca570ea11f18f5a/diff:/var/lib/docker/overlay2/f9dfa2983f74858bdde5d1f57465d95ce26052cb87340d3e5915e5d231c9bcf3/diff:/var/lib/docker/overlay2/1a19a1f95a0ed6c1c81458276ec0742f4b37d8fdb0cd67cee2ceb9d6b9000565/diff:/var/lib/docker/overlay2/64ed4de5de4739f6b941fdcf157011c50f0e84d01109976da6cfb1124b4f1a00/diff:/var/lib/docker/overlay2/2e026d68a744a85f93bc8ddbd446e525c0a2c17109bb9d4181b0306cb07f739c/diff:/var/lib/docker/overlay2/b3f5bb96d318f0af123ea2c81d089c101f556296495d7346fc247f948dac8ba8/diff:/var/lib/docker/overlay2/c1845ccaf7c542aae8ac57aceeb7edbd9cdead9a11acb62d26094cbd5224921f/diff",
+                "MergedDir": "/var/lib/docker/overlay2/cef8af29b0cd2d0fd726a60973b56afcad49bbce6a80e45dd399121dffe267e7/merged",
+                "UpperDir": "/var/lib/docker/overlay2/cef8af29b0cd2d0fd726a60973b56afcad49bbce6a80e45dd399121dffe267e7/diff",
+                "WorkDir": "/var/lib/docker/overlay2/cef8af29b0cd2d0fd726a60973b56afcad49bbce6a80e45dd399121dffe267e7/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "manager_mariadb",
+                "Source": "/var/lib/docker/volumes/manager_mariadb/_data",
+                "Destination": "/var/lib/mysql",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "b54a4c94a2bc",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "3306/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "MYSQL_USER=ara",
+                "MARIADB_AUTO_UPGRADE=0",
+                "MYSQL_DATABASE=ara",
+                "MYSQL_PASSWORD=aradragon!!!!!",
+                "MYSQL_ROOT_PASSWORD=aradragon!!!!!",
+                "MYSQL_ALLOW_EMPTY_PASSWORD=yes",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.17",
+                "LANG=C.UTF-8",
+                "MARIADB_VERSION=1:11.2.2+maria~ubu2204"
+            ],
+            "Cmd": [
+                "mariadbd"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "healthcheck.sh --connect --innodb_initialized"
+                ]
+            },
+            "Image": "index.docker.io/library/mariadb:11.2.2",
+            "Volumes": {
+                "/var/lib/mysql": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "e5d4a3885d99709468a2a56b950240b9bc180d0b95a5a4b574d20420cab498f9",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:5bf2b86cbac506ee1dca87b9bc6bddd0afb59d14e97e111ff6579887121fedae",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "manager",
+                "com.docker.compose.project.config_files": "/opt/manager/docker-compose.yml",
+                "com.docker.compose.project.working_dir": "/opt/manager",
+                "com.docker.compose.replace": "1076b07eb87c2ef7e842830ec37dd899e889aff7a5bef997b046953e758e4096",
+                "com.docker.compose.service": "mariadb",
+                "com.docker.compose.version": "2.24.7",
+                "org.opencontainers.image.authors": "MariaDB Community",
+                "org.opencontainers.image.base.name": "docker.io/library/ubuntu:jammy",
+                "org.opencontainers.image.description": "MariaDB Database for relational SQL",
+                "org.opencontainers.image.documentation": "https://hub.docker.com/_/mariadb/",
+                "org.opencontainers.image.licenses": "GPL-2.0",
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.source": "https://github.com/MariaDB/mariadb-docker",
+                "org.opencontainers.image.title": "MariaDB Database",
+                "org.opencontainers.image.url": "https://github.com/MariaDB/mariadb-docker",
+                "org.opencontainers.image.vendor": "MariaDB Community",
+                "org.opencontainers.image.version": "11.2.2"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "5735456d4cf80a56f7f5d79df344cec090358d1cfa7f2fdccc449e712eae2a24",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "3306/tcp": null
+            },
+            "SandboxKey": "/var/run/docker/netns/5735456d4cf8",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "manager_default": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "manager-mariadb-1",
+                        "mariadb",
+                        "b54a4c94a2bc"
+                    ],
+                    "NetworkID": "c96b01055dd9abdcfa19ca9539af465626f1f075adaa4eea2dd54a93ac8e8c2d",
+                    "EndpointID": "5f4c15fbee7ddcec30440edcfd8ae3c238ea3ea65974288ac292a70dbd5c8dab",
+                    "Gateway": "172.31.101.1",
+                    "IPAddress": "172.31.101.12",
+                    "IPPrefixLen": 27,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:1f:65:0c",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]

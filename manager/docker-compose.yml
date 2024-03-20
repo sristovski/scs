@@ -1,0 +1,348 @@
+---
+services:
+
+  ##########################################
+  # inventory-reconciler service
+
+  inventory_reconciler:
+    restart: unless-stopped
+    image: "quay.io/osism/inventory-reconciler:7.0.0d"
+    tmpfs:
+      - /inventory.pre:uid=45000,gid=45000
+    volumes:
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "interface:/interface:ro"
+      - "inventory_reconciler:/inventory"
+      - "/opt/configuration:/opt/configuration:ro"
+    healthcheck:
+      test: pgrep celery
+    environment:
+      - CELERY=1
+    secrets:
+      - NETBOX_TOKEN
+    env_file:
+      - "/opt/manager/configuration/netbox.env"
+
+  ##########################################
+  # ansible services (kolla-ansible, ..)
+
+  osism-ansible: &ansible
+    container_name: "osism-ansible"
+    restart: unless-stopped
+    image: "quay.io/osism/osism-ansible:7.0.0d"
+    mem_limit: 31884m
+    mem_reservation: 1024m
+    cpus: "12"
+    env_file:
+      - "/opt/manager/configuration/ansible.env"
+      - "/opt/manager/configuration/netbox.env"
+      - "/opt/manager/configuration/ara.env"
+    command: osism worker osism-ansible
+    environment:
+      - CELERY=1
+    healthcheck:
+      test: pgrep celery
+    volumes:
+      - "/etc/hosts:/etc/hosts:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "cache:/opt/ansible/cache"
+      - "logs:/opt/ansible/logs"
+      - "share:/share"
+      - "/opt/archive:/archive:rw"
+      - "/opt/configuration:/opt/configuration:ro"
+      - "/opt/state/netbox:/state:ro"
+      - "/opt/ansible/secrets:/ansible/secrets:ro"
+      - "inventory_reconciler:/ansible/inventory:ro"
+      - "interface:/interface"
+    secrets:
+      - NETBOX_TOKEN
+    depends_on:
+      inventory_reconciler:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      ara-server:
+        condition: service_started
+
+  ceph-ansible:
+    <<: *ansible
+    container_name: "ceph-ansible"
+    image: "quay.io/osism/ceph-ansible:7.0.0d"
+    mem_limit: 31884m
+    mem_reservation: 1024m
+    cpus: "12"
+    command: osism worker ceph-ansible
+    healthcheck:
+      test: pgrep celery
+    environment:
+      - CELERY=1
+  kolla-ansible:
+    <<: *ansible
+    container_name: "kolla-ansible"
+    image: "quay.io/osism/kolla-ansible:7.0.0d"
+    mem_limit: 31884m
+    mem_reservation: 1024m
+    cpus: "12"
+    command: osism worker kolla-ansible
+    healthcheck:
+      test: pgrep celery
+    environment:
+      - CELERY=1
+
+  ##########################################
+  # Netbox
+
+  netbox:
+    restart: unless-stopped
+    image: "quay.io/osism/osism-netbox:0.20240311.0"
+    command: osism worker netbox
+    volumes:
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/opt/configuration/netbox:/netbox:ro"
+      - "/opt/state/netbox:/state:rw"
+      - "/opt/manager/configuration/conductor.yml:/etc/conductor.yml:ro"
+    secrets:
+      - NETBOX_TOKEN
+    healthcheck:
+      test: pgrep -f '/usr/local/bin/python3 /usr/local/bin/osism worker netbox'
+    env_file:
+      - "/opt/manager/configuration/netbox.env"
+    deploy:
+      replicas: 1
+
+  ##########################################
+  # services that necessarily require Celery
+
+
+  ##########################################
+  # conductor service for netbox integration
+
+  conductor:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism worker conductor
+    volumes:
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/opt/manager/configuration/conductor.yml:/etc/conductor.yml:ro"
+      - "/opt/state/conductor:/state:rw"
+    secrets:
+      - NETBOX_TOKEN
+    healthcheck:
+      test: pgrep -f '/usr/local/bin/python3 /usr/local/bin/osism worker conductor'
+    env_file:
+      - "/opt/manager/configuration/conductor.env"
+      - "/opt/manager/configuration/netbox.env"
+      - "/opt/manager/configuration/openstack.env"
+
+
+  ##########################################
+  # openstack integration service
+
+  openstack:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism worker openstack
+    volumes:
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/opt/manager/configuration/conductor.yml:/etc/conductor.yml:ro"
+      - "/opt/configuration/environments/openstack:/etc/openstack:ro"
+    secrets:
+      - NETBOX_TOKEN
+    healthcheck:
+      test: pgrep -f '/usr/local/bin/python3 /usr/local/bin/osism service openstack'
+    env_file:
+      - "/opt/manager/configuration/openstack.env"
+      - "/opt/manager/configuration/netbox.env"
+
+  ##########################################
+  # watchdog service
+
+  watchdog:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism service watchdog
+    volumes:
+      - "/opt/configuration:/opt/configuration:ro"
+    healthcheck:
+      test: pgrep -f '/usr/local/bin/python3 /usr/local/bin/osism service watchdog'
+
+  ##########################################
+  # api service
+
+  api:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism service api
+    ports:
+      - "192.168.16.10:8000:8000"
+    healthcheck:
+      test: pgrep uvicorn
+    secrets:
+      - NETBOX_TOKEN
+    env_file:
+      - "/opt/manager/configuration/netbox.env"
+
+  ##########################################
+  # beat service
+
+  beat:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism service beat
+    healthcheck:
+      test: pgrep celery
+    secrets:
+      - NETBOX_TOKEN
+    env_file:
+      - "/opt/manager/configuration/netbox.env"
+
+  ##########################################
+  # osismclient service
+
+  osismclient:
+    container_name: osismclient
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: sleep infinity
+    secrets:
+      - NETBOX_TOKEN
+    env_file:
+      - "/opt/manager/configuration/ansible.env"
+      - "/opt/manager/configuration/client.env"
+      - "/opt/manager/configuration/netbox.env"
+      - "/opt/manager/configuration/ara.env"
+    volumes:
+      - "/etc/hosts:/etc/hosts:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "cache:/opt/ansible/cache"
+      - "interface:/interface:ro"
+      - "inventory_reconciler:/ansible/inventory:ro"
+      - "share:/share"
+      - "/opt/configuration:/opt/configuration:ro"
+      - "/opt/ansible/secrets:/ansible/secrets:ro"
+
+  ##########################################
+  # flower service
+
+  flower:
+    restart: unless-stopped
+    image: "quay.io/osism/osism:0.20240311.0"
+    command: osism service flower
+    healthcheck:
+      test: pgrep celery
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.middlewares.flower-redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.flower.entrypoints=http"
+      - "traefik.http.routers.flower.rule=Host(`flower.services.in-a-box.cloud`)"
+      - "traefik.http.routers.flower.middlewares=flower-redirect-to-https@docker"
+      - "traefik.http.routers.flower-secure.entrypoints=https"
+      - "traefik.http.routers.flower-secure.tls=true"
+      - "traefik.http.routers.flower-secure.rule=Host(`flower.services.in-a-box.cloud`)"
+      - "traefik.http.services.flower-secure.loadbalancer.server.port=5555"
+    networks:
+      - default
+      - traefik
+
+  ##########################################
+  # redis service
+
+  redis:
+    restart: unless-stopped
+    image: "index.docker.io/library/redis:7.2.4-alpine"
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: redis-cli ping
+    networks:
+      default:
+        aliases:
+          - cache
+
+  ##########################################
+  # ARA service
+
+  ara-server:
+    restart: unless-stopped
+    image: "quay.io/osism/ara-server:1.7.1"
+    env_file:
+      - "/opt/manager/configuration/ara-server.env"
+      - "/opt/manager/configuration/ara.env"
+    volumes:
+      - "/etc/hosts:/etc/hosts:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/opt/state/ara-server:/state:rw"
+    healthcheck:
+      test: curl --silent --fail --basic --user $$ARA_API_USERNAME:$$ARA_API_PASSWORD http://localhost:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.middlewares.ara-server-redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.ara-server-redirect-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.ara-server.entrypoints=http"
+      - "traefik.http.routers.ara-server.rule=Host(`ara.services.in-a-box.cloud`)"
+      - "traefik.http.routers.ara-server.middlewares=ara-server-redirect-to-https@docker"
+      - "traefik.http.routers.ara-server-secure.entrypoints=https"
+      - "traefik.http.routers.ara-server-secure.tls=true"
+      - "traefik.http.services.ara-server-secure.loadbalancer.server.port=8000" 
+      - "traefik.http.routers.ara-server-secure.rule=Host(`ara.services.in-a-box.cloud`)"
+    networks:
+      - default
+      - traefik
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  ##########################################
+  # mariadb service
+
+  mariadb:
+    # restart: unless-stopped
+    image: "index.docker.io/library/mariadb:11.3.2"
+    # image: "mariadb:11.1.4"
+    env_file:
+      - "/opt/manager/configuration/mariadb.env"
+    volumes:
+      - "mariadb:/var/lib/mysql"
+    healthcheck:
+      test: healthcheck.sh --connect --innodb_initialized
+
+
+##########################################
+# Volumes
+
+volumes:
+  inventory_reconciler:
+  interface:
+  cache:
+  logs:
+  mariadb:
+  share:
+
+##########################################
+# Secrets
+
+secrets:
+  NETBOX_TOKEN:
+    file: /opt/manager/secrets/NETBOX_TOKEN
+
+##########################################
+# Networks
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+    ipam:
+      driver: default
+      config:
+        - subnet:  172.31.101.0/27
+  traefik:
+    external: true
